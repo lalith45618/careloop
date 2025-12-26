@@ -1,6 +1,6 @@
 import pandas as pd
 from agents.observation import ObservationAgent
-from agents.adaption import AdaptationAgent
+from agents.adaptation import AdaptationAgent
 from agents.planning import PlanningAgent
 from agents.interaction import InteractionAgent
 
@@ -22,22 +22,21 @@ def run_careloop(dataset_path, label):
 
     for _, row in data.iterrows():
         state = observation_agent.observe(row)
-        adapt = adaptation_agent.should_adapt(state)
+        adapt,trigger = adaptation_agent.should_adapt(state)
 
         if adapt:
             current_plan, reason = planning_agent.adapt_plan(state)
 
             if previous_day:
                 print(
-                    f"[ADAPTATION] Triggered by {previous_day} → "
-                    f"{row['day']} plan updated."
-                )
-
+                    f"[ADAPTATION] Triggered on {row['day']} "
+                    f"Reason: {reason}"
+                    )
             message = interaction_agent.generate_message(True, reason)
             print("User Message:", message)
         else:
             message = interaction_agent.generate_message(False)
-            print(f"[NO CHANGE] {row['day']}: {message}")
+            print(f"[NO ADAPTATION] {row['day']}: {message}")
 
         previous_day = row["day"]
 
