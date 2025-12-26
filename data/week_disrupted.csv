@@ -1,5 +1,5 @@
 day,sleep_hours,steps,missed_actions
 Day5,7,6100,0
-Day6,5.2,4200,2
-Day7,5.5,4000,1
-Day8,4,1000,2
+Day6,2,4200,2
+Day7,1,1000,0
+Day8,8,1000,0

@@ -11,27 +11,27 @@ class PlanningAgent:
             "focus": "routine_stability"
         }
 
-        # explanation logic
-        if state["sleep_pattern"] == "high" and state["activity_pattern"] == "low":
-            reason = (
-                "Excessive sleep combined with very low activity "
-                "suggests disengagement or burnout."
-            )
+        # Dynamic reason generation based on today's data
+        reasons = []
 
-        elif state["sleep_pattern"] == "low" and state["activity_pattern"] == "high":
-            reason = (
-                "Low sleep combined with unusually high activity "
-                "indicates overcompensation and routine instability."
-            )
+        # Check today’s sleep
+        if state["today_sleep"] < 3:
+            reasons.append(f"Severely low sleep today ({state['today_sleep']}h)")
+        elif state["today_sleep"] < 6:
+            reasons.append(f"Sustained sleep deficit today ({state['today_sleep']}h)")
 
-        elif state["sleep_pattern"] == "low":
-            reason = (
-                "Sustained sleep deficit is affecting routine stability."
-            )
+        # Check today’s activity
+        if state["today_steps"] < 2000:
+            reasons.append(f"Very low activity today ({state['today_steps']} steps)")
 
-        else:
-            reason = (
-                "Repeated missed actions indicate declining engagement."
-            )
+        # Check today’s missed actions
+        if state["today_missed"] >= 2:
+            reasons.append("Multiple missed actions today")
 
-        return new_plan, reason
+        # Fallback for trend-based instability
+        if state["sleep_pattern"] != "normal" or state["activity_pattern"] != "normal":
+            if not reasons:
+                reasons.append("Routine instability detected based on recent behavior")
+
+        reason_message = " & ".join(reasons)
+        return new_plan, reason_message
